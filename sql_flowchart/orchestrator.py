@@ -10,10 +10,11 @@ from sql_flowchart.diagram_generator import SqlFlowchartGenerator
 class SQL:
     def __init__(self, path):
         self.path = os.path.abspath(path)
-        self.content = load_sql_file(path)
+        self.content = load_sql_file(self.path)
         self.parsed = parse_sql_file(self.content)
         self.model = model_sql(self.parsed)
         self.generator = SqlFlowchartGenerator(self.model)
+        self.output = path.replace(".sql","")
     
     def get_path(self):
         print(self.path)
@@ -28,22 +29,13 @@ class SQL:
         return self.parsed
     
     def get_model(self):
-        for k, v in self.model.items():
-            print(f"{k}")
-            print(f"{v.type}")
-            print(f"{v.content}")
-            print(f"{v.parent}")
-            print(f"{v.children}\n")
+        for k, node in self.model.items():
+            print(f"{node.id}")
+            print(f"{node.type}")
+            print(f"{node.content}")
+            print(f"{node.parents}")
+            print(f"{node.children}\n")
         return self.model
     
     def flowchart(self):
-        self.generator.generate_flowchart('output\\sql_flowchart')
-
-    
-if __name__ == "__main__":
-    file = SQL("queries\\test.sql")
-    file.get_path()
-    file.get_content()
-    file.get_parsed()
-    file.get_model()
-    file.flowchart()
+        self.generator.generate_flowchart('output\\' + self.output)
